@@ -2,16 +2,20 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   creationTimestamp: null
-  name: pullrequest
+  name: hotfix
 spec:
   pipelineSpec:
     tasks:
       - name: from-build-pack
         resources: {}
         taskSpec:
+          volumes:
+            - name: gradle-settings
+              secret:
+                secretName: jenkins-gradle-properties
           metadata: {}
           stepTemplate:
-            image: uses:y-tree-limited/pipeline-catalog/tasks/gradle-ms-java17/pullrequest.yaml@versionStream
+            image: uses:y-tree-limited/pipeline-catalog/tasks/gradle-ms-java17/hotfix.yaml@versionStream
             name: ""
             resources:
               requests:
@@ -19,10 +23,12 @@ spec:
                 memory: 512Mi
             workingDir: /workspace/source
           steps:
-            - image: uses:y-tree-limited/pipeline-catalog/tasks/git-clone/git-clone-pr.yaml@versionStream
+            - image: uses:y-tree-limited/pipeline-catalog/tasks/git-clone/git-clone.yaml@versionStream
               name: ""
               resources: {}
             - name: jx-variables
+              resources: {}
+            - name: next-version
               resources: {}
             - name: build-gradle-ms
               resources: {}
@@ -30,23 +36,26 @@ spec:
               resources: {}
             - name: build-container-build
               resources: {}
-            # - name: promote-jx-preview
-            #   resources: {}
+            - name: promote-changelog
+              resources: {}
+            - name: promote-helm-release
+              resources: {}
+
   podTemplate:
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
-          - matchExpressions:
-            - key: node.kubernetes.io/component
-              operator: In
-              values:
-              - "builder"
+            - matchExpressions:
+                - key: node.kubernetes.io/component
+                  operator: In
+                  values:
+                    - "builder"
     tolerations:
-    - key: "component"
-      operator: "Equal"
-      value: "builder"
-      effect: "NoSchedule"   
+      - key: "component"
+        operator: "Equal"
+        value: "builder"
+        effect: "NoSchedule"
   serviceAccountName: tekton-bot
   timeout: 1h0m0s
 status: {}

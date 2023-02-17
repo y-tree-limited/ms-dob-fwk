@@ -1,0 +1,7 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ms-cloud-bootstrap
+  annotations:
+    replicator.v1.mittwald.de/replicate-from: jx-staging/ms-cloud-bootstrap-preview
