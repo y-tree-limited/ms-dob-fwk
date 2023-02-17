@@ -1,0 +1,5 @@
+name: ms-dob-fwk
+description: A Helm chart for Kubernetes
+apiVersion: v1
+version: 0.1.0-SNAPSHOT
+icon: https://raw.githubusercontent.com/cdfoundation/artwork/master/jenkinsx/icon/color/jenkinsx-icon-color.png
