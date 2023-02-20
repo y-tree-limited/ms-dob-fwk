@@ -1,3 +1,4 @@
+
 apiVersion: config.lighthouse.jenkins-x.io/v1alpha1
 kind: TriggerConfig
 spec:
@@ -14,3 +15,8 @@ spec:
 #    branches:
 #    - ^main$
 #    - ^master$
+#  - name: hotfix
+#    context: "release"
+#    source: "hotfix.yaml"
+#    branches:
+#    - ^hotfix\/\d+\.\d+$    

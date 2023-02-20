@@ -25,9 +25,13 @@ jx:
   releaseNamePrefix: ""  
 # define environment variables here as a map of key: value
 env:
-  SENTRY_DSN: "https://bd2dbbe20e05469cbba6bc3a0b9e7604@o158665.ingest.sentry.io/6024714"
+  # JDK_JAVA_OPTIONS: "-XX:MaxRAMPercentage=75 -Xss1m"
+  #SENTRY_DSN: "https://11fdd7afb4934595a24fc62bcb16281a@o158665.ingest.sentry.io/5436178"
+  #LANG: en_US.utf8
   SERVER_PORT: 8080
   SPRING_CLOUD_BOOTSTRAP_LOCATION: classpath:/,/spring/cloud/bootstrap-cloud.properties
+  #SPRING_CLOUD_BOOTSTRAP_LOCATION: classpath:/,/spring/cloud/bootstrap-cloud-v2.properties    ##### Uncomment to enabie Vault internal Name
+  # LANG: en_US.utf8
 
 # enable this flag to use knative serve to deploy the app
 knativeDeploy: false
@@ -76,11 +80,11 @@ service:
     spring-boot: "true"
 resources:
   limits:
-    cpu: 1
-    memory: 2Gi
+    cpu: 800m
+    memory: 1Gi
   requests:
-    cpu: 1
-    memory: 512Mi
+    cpu: 800m
+    memory: 1Gi
 probePath: /actuator/health
 livenessProbe:
   initialDelaySeconds: 180
@@ -138,16 +142,6 @@ jxRequirements:
       production: false
       secretName: ""
 
-volumeMounts:
-  - name: bootstrap
-    mountPath: /spring/cloud/
-
-
-volumes:
-  - name: bootstrap
-    configMap:
-      name: ms-cloud-bootstrap
-
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
@@ -158,3 +152,46 @@ affinity:
           values:
           - "application"
 nodeSelector: {}
+
+volumes:
+  - name: bootstrap
+    configMap:
+      name: ms-cloud-bootstrap
+  # - name: cacerts
+  #   emptyDir: {}
+  # - name: vault-ca
+  #   secret:
+  #     secretName: vault-ca
+
+volumeMounts:
+  - name: bootstrap
+    mountPath: /spring/cloud/
+  # - name: cacerts
+  #   mountPath: /usr/local/openjdk-11/lib/security/
+
+# deploymentInitContainers:
+#   initContainers:
+#   - command:
+#     - bash
+#     - -c
+#     - |
+#       ls -la /usr/local/openjdk-11/lib/security/
+#       cp -R /usr/local/openjdk-11/lib/security/* /cacerts/
+#       ls -la /cacerts/
+#       cat /security/vault-ca.crt
+#       keytool -import -noprompt -trustcacerts -alias vaultca -file /security/vault-ca.crt -keystore /cacerts/cacerts -storepass changeit
+#       #keytool -import -alias vaultca -file /security/vault-ca.crt  -keystore /cacerts/cacerts -storepass changeit -noprompt
+#       keytool -list -keystore /cacerts/cacerts -alias vaultca -storepass changeit -noprompt
+#       keytool -keystore /cacerts/cacerts -storepass changeit -list
+#       ls -la /cacerts/
+#     image: 986794016656.dkr.ecr.eu-west-2.amazonaws.com/baseimage:openjdk-11-jdk-slim
+#     imagePullPolicy: IfNotPresent
+#     name: init-vault-secret
+#     resources: {}
+#     terminationMessagePath: /dev/termination-log
+#     terminationMessagePolicy: File
+#     volumeMounts:
+#     - mountPath: /cacerts
+#       name: cacerts
+#     - mountPath: /security
+#       name: vault-ca

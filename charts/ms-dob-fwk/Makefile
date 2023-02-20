@@ -1,6 +1,6 @@
 CHART_REPO := http://jenkins-x-chartmuseum:8080
 CURRENT=$(pwd)
-NAME := ms-dob-fwk
+NAME: ms-dob-fwk
 OS := $(shell uname)
 RELEASE_VERSION := $(shell cat ../../VERSION)
 
