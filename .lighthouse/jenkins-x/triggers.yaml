@@ -8,15 +8,15 @@ spec:
     always_run: true
     optional: false
     source: "pullrequest.yaml"
-  postsubmits:
-  - name: release
-    context: "release"
-    source: "release.yaml"
-    branches:
-    - ^main$
-    - ^master$
-  - name: hotfix
-    context: "release"
-    source: "hotfix.yaml"
-    branches:
-    - ^hotfix\/\d+\.\d+$    
+#  postsubmits:
+#  - name: release
+#    context: "release"
+#    source: "release.yaml"
+#    branches:
+#    - ^main$
+#    - ^master$
+#  - name: hotfix
+#    context: "release"
+#    source: "hotfix.yaml"
+#    branches:
+#    - ^hotfix\/\d+\.\d+$    
