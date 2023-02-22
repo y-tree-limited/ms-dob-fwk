@@ -1,4 +1,4 @@
-package com.ytree.example
+package com.ytree.dob_fwk.status.core
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
