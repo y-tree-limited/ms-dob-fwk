@@ -33,7 +33,9 @@ subprojects {
 
     dependencies {
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+        testImplementation("org.hamcrest:hamcrest-all:1.3")
     }
 
     tasks {
