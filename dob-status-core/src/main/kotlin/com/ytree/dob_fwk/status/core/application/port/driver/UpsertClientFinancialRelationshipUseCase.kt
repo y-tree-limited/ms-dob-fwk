@@ -7,11 +7,16 @@ import com.ytree.dob_fwk.status.core.application.port.driver.model.ClientFinanci
 import com.ytree.dob_fwk.status.core.application.port.driver.model.ClientFinancialRelationshipUpsertRequest
 import com.ytree.dob_fwk.status.core.domain.ClientFinancialRelationship
 import com.ytree.dob_fwk.status.core.domain.ClientFinancialRelationshipPatch
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class UpsertClientFinancialRelationshipUseCase(private val repository: ClientFinancialRelationshipRepository): IUpsertClientFinancialRelationshipUseCase {
 
-    override operator fun invoke(request: ClientFinancialRelationshipUpsertRequest): Result<ClientFinancialRelationshipResponse> =
-        repository.getClientFinancialRelationshipById(request.relationshipHeader.relationshipId).flatMap {
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
+    override operator fun invoke(request: ClientFinancialRelationshipUpsertRequest): Result<ClientFinancialRelationshipResponse> {
+        log.info("Requested to upsert client financial relationship with id: ${request.relationshipHeader.relationshipId} and body: $request")
+        return repository.getClientFinancialRelationshipById(request.relationshipHeader.relationshipId).flatMap {
             it?.let { entity ->
                 val financialRelationship = ClientFinancialRelationship.from(entity)
                 val patch = ClientFinancialRelationshipPatch.from(request)
@@ -25,6 +30,12 @@ class UpsertClientFinancialRelationshipUseCase(private val repository: ClientFin
                 repository.saveClientFinancialRelationship(entity)
                     .map { _ -> ClientFinancialRelationshipResponse.from(entity) }
             }
-        }
+        }.apply(::logging)
+    }
+
+    private fun logging(result: Result<ClientFinancialRelationshipResponse>) =
+        result
+            .onSuccess { response -> log.info("Responding with success: $response") }
+            .onFailure { t -> log.error("Responding with error: $t") }
 
 }

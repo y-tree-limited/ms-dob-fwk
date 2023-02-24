@@ -1,6 +1,8 @@
 package com.ytree.dob_fwk.status.core.domain
 
 import com.ytree.dob_fwk.status.core.domain.DOBStatus.UNKNOWN
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 internal class ClientFinancialRelationship private constructor(
     val relationshipNumber: FinancialRelationshipNumber?,
@@ -10,6 +12,8 @@ internal class ClientFinancialRelationship private constructor(
     val loaContactEmail: LOAContactEmail?,
     val status: DOBStatus
 ) {
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
     companion object {
         private val statusEvaluator = DOBStatusEvaluatorContext
 
@@ -73,6 +77,7 @@ internal class ClientFinancialRelationship private constructor(
     }
 
     fun update(patch: ClientFinancialRelationshipPatch): ClientFinancialRelationship {
+        log.info("Updating financial relationship: $this with patch: $patch")
         val toUpdate = patchRelationship(patch)
         val status = statusEvaluator(toUpdate)
         return toUpdate.patchStatus(status)
@@ -105,5 +110,17 @@ internal class ClientFinancialRelationship private constructor(
             loaContactEmail,
             status
         )
+
+    override fun toString(): String {
+        return "ClientFinancialRelationship(" +
+                "relationshipNumber=$relationshipNumber, " +
+                "relationshipManager=$relationshipManager, " +
+                "selectedDataPipe=$selectedDataPipe, " +
+                "targetedDataPipe=$targetedDataPipe, " +
+                "loaContactEmail=$loaContactEmail, " +
+                "status=$status" +
+                ")"
+    }
+
 
 }
